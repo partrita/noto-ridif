@@ -1,125 +1,101 @@
-# 리디바탕 -9%
+# Noto-ridif
 
-> 리디바탕 글꼴의 자간을 전자책 리더에 맞게 -9% 자간을 좁게 조정한 가독성 향상 버전.  
-> (주의) 한 번 사용해 보면, 너무 술술 읽혀서 다른 글꼴로 넘어갈 수 없게 됨.  
-> RIDIBatangLSHSans : **가장 완성도 높은 리디바탕체 글꼴을 작업 추가** (/font-LSHSans 추천)
+> [!NOTE]
+> **리디바탕(RIDIBatang)의 미려한 본문 활자감과 Noto Serif CJK KR의 압도적인 유니코드 글리프 커버리지를 결합한 합성 명조 폰트**
 
-## Thanks
+![](demo.png)
 
-- 개인적으로 사용하던 글꼴을 공유했을 뿐인데 이렇게 많은 관심을 보여주실 줄 몰랐습니다.
-- 디지털감성 e북카페 회원분들께 감사드립니다.
-- v1.1.0 자간이 다른 두 종류의 글꼴을 추가로 공유합니다.
-  - /fonts
-    - RIDIBatang-9.otf
-    - RIDIBatang-7.otf (추가)
-    - RIDIBatang-5.otf (추가)
-- v1.2.0 네이버 디지털감성e북카페 @이방인 님의 리디바탕 수정 글꼴의 자간조정 글꼴을 추가합니다.
-  - /fonts-LSHSans
-    - RIDIBatangLSHSans-9.ttf
-    - RIDIBatangLSHSans-7.ttf
-    - RIDIBatangLSHSans-5.ttf
+## 📖 서체 소개
+
+**Noto-ridif**는 전자책(E-Book Reader) 및 고해상도 독서 환경에서 널리 사랑받는 **리디바탕(RIDIBatang)**의 유려한 글리프를 기본으로 하고, 누락된 문자나 특수 기호로 인해 발생하는 **Tofu(□, 글자 깨짐)** 현상을 방지하기 위해 **Google Noto Serif CJK KR (본명조)**을 폴백 베이스로 오버레이 병합한 오픈소스 한글 폰트입니다.
+
+### 왜 만들었나요?
+- **리디바탕의 뛰어난 가독성**: 긴 문장과 전자책 화면에서 눈의 피로를 덜어주는 특유의 획 구조와 조판 완성도를 제공합니다.
+- **Tofu 현상 해결**: 순수 리디바탕 서체에서 지원하지 않는 확장 한자, 특수 부호, 다국어 문자(라틴 확장, 키릴, 그리스 문자 등) 및 수학/도형 기호를 Noto Serif CJK KR의 23,000여 개 글리프로 빈틈없이 채워 넣었습니다.
+- **최적화된 글리프 변환**: Cubic(PostScript) 곡선 글리프를 높은 정밀도의 Quadratic(TrueType) 곡선으로 변환하여 임베디드 단말기와 데스크톱 모두에서 빠른 렌더링을 보장합니다.
+
+## ✨ 주요 특징
+
+1. **완벽에 가까운 한글 및 다국어 지원**:
+   - 완성형 한글 11,172자 및 고어/옛한글 부호 지원
+   - 한자(CJK 통합 한자 및 인명용 한자), 일본어 가나(히라가나/가타카나)
+   - 다양한 문장 부호, 단위 기호, 통화 기호($·€·£·¥·₩·₹·₽), 수학 연산자, 기하학 도형
+2. **전자종이(E-Paper / E-Reader) 최적화**:
+   - 전자책 리더기 단말기에서 바로 사용할 수 있는 바이너리 폰트(`.epdfont`) 변환 스크립트 제공 (1-bit / 2-bit 그레이스케일 지원)
+3. **표준 오픈 TTF 포맷**:
+   - 모바일, 전자책 뷰어, macOS, Windows, Linux 어디서나 기본 폰트로 즉시 사용 가능
 
 
----
+## 🛠️ 빠른 시작 (빌드 및 사용법)
 
-## Feature
+이 프로젝트는 [uv](https://github.com/astral-sh/uv) 패키지 매니저를 사용하여 의존성 설치 및 빌드를 간편하게 수행할 수 있습니다.
 
-- eBook리더의 가독성을 높이기 위해 한글자간 -9% 줄인 리디바탕체 글꼴입니다.
-- 실제 종이로 된 한글 인쇄물을 편집할 때에도 일반적으로 자간을 줄여 가독성을 높입니다.
-- 자간을 줄이면 '모기'의 모음 'ㅗ'와 자음 'ㄱ'의 거리가 멀어 모래알처럼 흩어져보이는 현상을 줄일 수 있습니다.
-- 비록 '울릉도'를 표현할 때 가로 모음이 맞닿긴 하지만, 알아보지 못할 정도로 간섭하지 않습니다.
-- 자간 -5%, -7% 를 제작하여 테스트하였으나, **eBook 리더**에서 가장 보기 좋았던 **-9%** 를 공개합니다.
-- **한글**의 자간만 조정하였습니다.
-- **띄어쓰기, 영문, 기호, 한자, 일본어**는 획이 달라붙어 오히려 가독성이 떨어지므로 **적용하지 않았습니다.**
+### 1. 폰트 직접 빌드하기
+기본 소스 폰트(`fonts/NotoSerifKR-Regular.ttf` + `fonts/RIDIBatang.otf`)를 병합하여 새로운 `noto-ridif.ttf`를 생성합니다.
 
-## Compare
+```bash
+# 의존성 설치
+uv sync
 
-### RIDIBatang-9 vs. RIDIBatang
+# 폰트 병합 실행 (기본 출력: noto-ridif.ttf)
+uv run noto-ridif
+```
 
-<img width="100%" alt="RIDIBatang-9 vs RIDIBatang" src="https://github.com/user-attachments/assets/02aa5a71-e1c6-400e-8fc5-9d519bbc4f3d" />  
+### 2. 옵션별 사용자 정의 빌드
+```bash
+uv run noto-ridif \
+  --base fonts/NotoSerifKR-Regular.ttf \
+  --overlay fonts/RIDIBatang.otf \
+  --output custom-noto-ridif.ttf \
+  --name "noto-ridif" \
+  --max-err 0.5
+```
 
-- 이미지에 나타난 파일명이 RIDIBatang-9.otf로 변경되었습니다. (참고만 하세요)
-- 마치 종이책과 유사하게 전체적으로 조밀해지고 띄어쓰기가 잘 구분되어서, 흩어진 단어를 찾게되는 피로감이 줄어듭니다.
+## 📜 포함된 유틸리티 스크립트
 
-### RIDIBatang-9
+자세한 옵션과 고급 사용법은 [scripts/README.md](scripts/README.md)를 참고하세요.
 
-<img width="100%" height="2678" alt="RIDIBatang-9" src="https://github.com/user-attachments/assets/3b227f7c-35d9-432a-ae56-90c8e313674f" />
+### A5 도서 판형 데모 렌더러 (`scripts/render_demo.py`)
+`noto-ridif.ttf`를 사용하여 실제 A5 책 조판 규격의 고품질 데모 이미지(`demo.png`)를 생성합니다.
+```bash
+uv run python scripts/render_demo.py -f demo.txt -o demo.png
+```
 
-- RIDIBatang-9 는 시스템 한자 글꼴을 그대로 사용합니다.
-- 전체적으로 통통한 리디바탕체와 이질감이 느껴집니다.
+### E-Paper 바이너리 폰트 변환기 (`scripts/font_to_epdfont.py`)
+E-Reader 단말기(Kindle, Kobo, ESP32 기반 전자종이 등)용 초경량 `.epdfont` 파일로 변환합니다.
+```bash
+# 2-bit 그레이스케일 (기본값)
+uv run python scripts/font_to_epdfont.py noto-ridif 16 noto-ridif.ttf -o noto-ridif_16.epdfont
 
-### RIDIBatangLSHSans-9 (완성)
+# 1-bit 모노크롬 모드 (--1bit)
+uv run python scripts/font_to_epdfont.py noto-ridif 16 noto-ridif.ttf --1bit -o noto-ridif_16_1bit.epdfont
+```
 
-<img width="100%" height="2688" alt="RIDIBatangLSHSans-9" src="https://github.com/user-attachments/assets/1d0c8bfc-3b94-428c-ab19-6d04dc50e15d" />
 
-- RIDIBatang-9 는 본고딕K 한자가 포함되어 있습니다.
-- 리디바탕체와 잘 어울립니다.
+## 🧪 테스트 및 품질 검사
 
-## Download
+코드 스타일, 린트 및 타입 안전성은 프로젝트 내 자동화 도구를 통해 항상 검사됩니다.
 
-### v1.2.0 (+LSHSans)
-- 전자책 리더기에서 직접 내려받아 글꼴을 추가하기 쉽도록 링크를 따로 분리해서 올립니다.
-- DownLoad(.zip) [v1.2.0](https://github.com/mcnorton/ridibatang-9/archive/refs/tags/v1.2.0.zip) 전체 파일
-  - [(-9%) v1.2.0/RIDIBatangLSHSans-9.ttf](https://github.com/mcnorton/ridibatang-9/releases/download/v1.2.0/RIDIBatangLSHSans-9.ttf) (강력추천)
-  - [(-7%) v1.2.0/RIDIBatangLSHSans-7.ttf](https://github.com/mcnorton/ridibatang-9/releases/download/v1.2.0/RIDIBatangLSHSans-7.ttf)
-  - [(-5%) v1.2.0/RIDIBatangLSHSans-5.ttf](https://github.com/mcnorton/ridibatang-9/releases/download/v1.2.0/RIDIBatangLSHSans-5.ttf)
-- 네이버 디지털감성e북카페 @이방인 님의 리디바탕 수정 글꼴 [v.1.001] 리디바탕 + 본고딕K 한자 + Literata 베이스 자간조정하여 추가
-  - /fonts : RIDIBatang.otf
-  - **/fonts-LSHSans** : RIDIBatangLSHSans.ttf
-- 리디바탕체와 잘 어울리는 본고딕K한자가 추가되어 보기 좋아짐.
+```bash
+# 테스트 및 린터/타입 일괄 실행
+uv run pytest
 
-### v1.1.0 (.otf)
-- 전자책 리더기에서 직접 내려받아 글꼴을 추가하기 쉽도록 링크를 따로 분리해서 올립니다.
-- DownLoad
-  - [(-9%) v1.1.0/RIDIBatang-9.otf](https://github.com/mcnorton/ridibatang-9/releases/download/v1.1.0/RIDIBatang-9.otf) (추천)
-  - [(-7%) v1.1.0/RIDIBatang-7.otf](https://github.com/mcnorton/ridibatang-9/releases/download/v1.1.0/RIDIBatang-7.otf)
-  - [(-5%) v1.1.0/RIDIBatang-5.otf](https://github.com/mcnorton/ridibatang-9/releases/download/v1.1.0/RIDIBatang-5.otf)
-- 전자책 리더와 태블릿 중에 압축해제가 어려운 기기에서는 .otf 파일을 직접 내려받아 사용자글꼴로 설정하면 됩니다.
-- 9, 7, 5 세 종류를 한 번 적용해 보시고, 글이 가장 잘 읽히는 글꼴을 사용하시면 됩니다.
+# Ruff 코드 스타일 검사
+uv run ruff check .
 
-### v1.1.0 (.zip)
-- [https://github.com/mcnorton/ridibatang-9/releases](https://github.com/mcnorton/ridibatang-9/releases)
-  - .otf 파일을 직접 내려받으면 시스템 보안정책으로 문제가 발생하는 경우에는 Source(.zip)를 받아 압축해제 후 사용하시면 됩니다.
-  - README는 GitHub 페이지가 가장 최신입니다. 포함된 파일은 참고만 하세요.
+# Ty 정적 타입 검사
+ty check .
+```
 
-## License
+## 📄 라이선스 (License)
 
-### 리디바탕-9 글꼴
+`noto-ridif` 글꼴 및 파생 폰트 소프트웨어는 [SIL Open Font License 1.1](LICENSE)에 따라 배포됩니다.
 
-- 리디바탕 글꼴의 라이센스를 따릅니다.
-
-> 리디바탕 글꼴은 개인 및 기업 사용자를 포함한 모든 사용자에게 무료로 제공되며 자유롭게 수정하고 재배포하실 수 있습니다. 단, 글꼴 자체를 유료로 판매하는 것은 금지하며, 리디바탕 글꼴은 본 저작권 안내와 라이선스 전문을 포함해서 다른 소프트웨어와 번들하거나 재배포 또는 판매가 가능합니다. 리디바탕-9는 맥노턴이 수정하여 재배포한 전자책 가독성 향상 버전입니다.
-> 
-> This Font Software is licensed under the SIL Open Font License, Version 1.1.  
-> 리디바탕의 저작권은 리디주식회사가 소유하고 있습니다.
- 
-> 라이선스 전문을 포함하기 어려울 경우, 리디바탕-9 글꼴의 출처 표기를 권장합니다.  
-> 예) **이 페이지는 리디주식회사에서 제공한 리디바탕 글꼴이 사용되어 있습니다. 리디바탕-9는 맥노턴이 수정하여 재배포한 전자책 가독성 향상 버전입니다.**
-
-### 리디바탕 글꼴
-
-> 리디바탕 글꼴은 개인 및 기업 사용자를 포함한 모든 사용자에게 무료로 제공되며 자유롭게 수정하고 재배포하실 수 있습니다. 단, 글꼴 자체를 유료로 판매하는 것은 금지하며, 리디바탕 글꼴은 본 저작권 안내와 라이선스 전문을 포함해서 다른 소프트웨어와 번들하거나 재배포 또는 판매가 가능합니다.
-> 
-> This Font Software is licensed under the SIL Open Font License, Version 1.1.  
-> 리디바탕의 저작권은 리디주식회사가 소유하고 있습니다.
- 
-> 라이선스 전문을 포함하기 어려울 경우, 리디바탕 글꼴의 출처 표기를 권장합니다.  
-> 예) **이 페이지는 리디주식회사에서 제공한 리디바탕 글꼴이 사용되어 있습니다.**
-
-## URL
-> Android, iOS 리디북스 앱과 PAPER를 최신 버전으로 업데이트하여 리디바탕을 사용해보세요.  
-> [https://ridicorp.com/ridibatang](https://ridicorp.com/ridibatang)
-> 
-> Github에서 ridibatang-9의 개선판이이 업데이트 됩니다.  
-> [https://github.com/mcnorton/ridibatang-9](https://github.com/mcnorton/ridibatang-9)
-
----
-
-## One more thing...
-
-### 자매품
-
-[<img width="240" height="81" alt="한국역사연표-배너" src="https://github.com/user-attachments/assets/de1772e9-fbec-49bb-b5f8-fe3b5b83eec8" />](https://mcnorton.github.io/korea_history/)  
-
-- 지성인과 학생들의 전자책, 스마트폰, 태블릿 필수템  
-- 구글 플레이스토어, 애플 앱스토어 동시 출시
+- **개인 및 상업적 이용 무료**: 인쇄물, 웹사이트, 영상, 임베디드 기기, 앱 등 모든 상업적/비상업적 용도로 자유롭게 사용할 수 있습니다.
+- **수정 및 재배포 허용**: 글꼴을 자유롭게 수정, 가공, 병합 및 재배포할 수 있습니다.
+- **제한 사항**: 
+  - 본 폰트 소프트웨어 자체를 단독으로 유상 판매할 수 없습니다.
+  - 수정되거나 파생된 모든 폰트 역시 동일한 SIL Open Font License 1.1 조건으로 배포되어야 합니다.
+- **기반 서체 저작권**:
+  - **Noto Serif CJK KR**: © 2017-2024 Adobe (Licensed under SIL OFL 1.1)
+  - **RIDIBatang (리디바탕)**: © 2019 RIDI Corporation & Sandoll Inc. (Licensed under SIL OFL 1.1)
