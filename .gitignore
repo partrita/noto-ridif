@@ -253,3 +253,5 @@ $RECYCLE.BIN/
 noto-ridif.ttf
 fonts/noto-ridif.ttf
 *.epdfont
+*.woff
+*.woff2

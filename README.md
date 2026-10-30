@@ -26,8 +26,9 @@
 3. **렌더링 및 메트릭 최적화**:
    - 라틴·그리스·키릴·문장부호·숫자 글리프에 TrueType 힌팅 적용 (`--hint`)
    - 세로쓰기 메트릭(`vmtx`) 무결성과 cmap/hmtx 정합성을 빌드 시 검증 (`--verify`)
-4. **표준 오픈 TTF 포맷**:
+4. **표준 오픈 TTF 및 웹 폰트**:
    - 모바일, 전자책 뷰어, macOS, Windows, Linux 어디서나 기본 폰트로 즉시 사용 가능
+   - EPUB 내부 임베딩·웹용 압축 포맷 `WOFF`(4.2MB)·`WOFF2`(2.5MB) 제공
 
 ### 보장 문자 범위
 
@@ -112,9 +113,35 @@ uv run python scripts/font_to_epdfont.py noto-ridif 28 noto-ridif.ttf --gamma 0.
 uv run python scripts/font_to_epdfont.py noto-ridif 20 noto-ridif.ttf --1bit -o noto-ridif_20_1bit.epdfont
 ```
 
-### 릴리스 자산 (v0.2.0)
+### 웹 폰트 변환기 (`scripts/font_to_woff.py`)
+
+EPUB 내부 임베딩이나 웹 페이지에서 사용할 수 있는 압축 폰트를 생성합니다. `WOFF2`는 `brotli` 압축을 사용합니다.
+
+```bash
+# WOFF + WOFF2 동시 생성
+uv run python scripts/font_to_woff.py noto-ridif.ttf --output-dir .
+
+# 한 형식만 생성
+uv run python scripts/font_to_woff.py noto-ridif.ttf --formats woff2
+```
+
+EPUB에 임베딩할 때는 다음처럼 `@font-face`로 연결할 수 있습니다.
+
+```css
+@font-face {
+  font-family: "noto-ridif";
+  src: url("noto-ridif.woff2") format("woff2"),
+       url("noto-ridif.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+```
+
+### 릴리스 자산 (v0.2.1)
 
 - `noto-ridif.ttf` — 힌팅 및 무결성 검증이 적용된 전체 글리프 폰트
+- `noto-ridif.woff` — EPUB·웹용 WOFF 압축 폰트
+- `noto-ridif.woff2` — EPUB·웹용 WOFF2 압축 폰트
 - `noto-ridif_20_2bit.epdfont` — UI용 2-bit 전자종이 폰트
 - `noto-ridif_28_2bit.epdfont` — 본문용 2-bit 전자종이 폰트
 

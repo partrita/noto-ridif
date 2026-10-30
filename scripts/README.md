@@ -84,3 +84,31 @@ uv run python scripts/font_to_epdfont.py merged 16 fonts/primary.ttf fonts/fallb
 | `--baseline-offset` | 베이스라인 수직 오프셋(px, 양수=위로) | `0` |
 | `--gamma` | 2-bit 그레이스케일 감마 (<1은 중간톤을 진하게, >1은 연하게) | `1.0` |
 | `--additional-intervals` | 추가 포함할 유니코드 범위 (`MIN,MAX`) | - |
+
+---
+
+## 3. `font_to_woff.py` (WOFF / WOFF2 웹 폰트 변환기)
+
+`noto-ridif.ttf`를 EPUB 내부 임베딩이나 웹에서 사용할 수 있는 압축 폰트로 변환합니다. `WOFF2`는 `brotli` 압축을 사용하며, 원본의 힌팅과 OpenType 기능을 그대로 유지합니다.
+
+### 사용법
+```bash
+# WOFF + WOFF2 동시 생성 (기본값)
+uv run python scripts/font_to_woff.py noto-ridif.ttf --output-dir .
+
+# WOFF2만 생성
+uv run python scripts/font_to_woff.py noto-ridif.ttf --formats woff2
+
+# 출력 이름 지정
+uv run python scripts/font_to_woff.py noto-ridif.ttf --basename noto-ridif-web
+```
+
+### 주요 옵션
+| 옵션 | 설명 | 기본값 |
+|---|---|---|
+| `font` | 입력 TTF/OTF 파일 | (필수) |
+| `-o`, `--output-dir` | 출력 디렉터리 | `.` |
+| `--basename` | 확장자를 제외한 출력 파일 이름 | 입력 파일 stem |
+| `--formats` | 생성할 형식 (`woff`, `woff2`, 쉼표 구분) | `woff,woff2` |
+
+EPUB에서는 두 파일을 함께 넣고 `@font-face`의 `src`에 WOFF2를 먼저, WOFF를 폴백으로 지정하면 됩니다.

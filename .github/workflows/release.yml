@@ -37,12 +37,17 @@ jobs:
           uv run python scripts/font_to_epdfont.py noto-ridif 20 noto-ridif.ttf -o noto-ridif_20_2bit.epdfont
           uv run python scripts/font_to_epdfont.py noto-ridif 28 noto-ridif.ttf -o noto-ridif_28_2bit.epdfont
 
+      - name: Build web fonts (WOFF and WOFF2)
+        run: uv run python scripts/font_to_woff.py noto-ridif.ttf --output-dir .
+
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             noto-ridif.ttf
+            noto-ridif.woff
+            noto-ridif.woff2
             noto-ridif_20_2bit.epdfont
             noto-ridif_28_2bit.epdfont
           generate_release_notes: true
@@ -55,5 +60,7 @@ jobs:
           name: noto-ridif-font
           path: |
             noto-ridif.ttf
+            noto-ridif.woff
+            noto-ridif.woff2
             noto-ridif_20_2bit.epdfont
             noto-ridif_28_2bit.epdfont

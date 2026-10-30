@@ -54,6 +54,39 @@ def test_vertical_metrics_complete() -> None:
         font.close()
 
 
+def test_web_fonts(tmp_path: Path) -> None:
+    """WOFF and WOFF2 output must preserve glyph coverage and flavor."""
+    cmd = [
+        sys.executable,
+        "scripts/font_to_woff.py",
+        "noto-ridif.ttf",
+        "--output-dir",
+        str(tmp_path),
+    ]
+    res = subprocess.run(cmd, check=False, capture_output=True, text=True)
+    assert res.returncode == 0, f"font_to_woff.py failed: {res.stderr}"
+
+    source = TTFont("noto-ridif.ttf")
+    try:
+        source_cmap = source.getBestCmap()
+        assert source_cmap is not None
+        expected_cmap = set(source_cmap)
+    finally:
+        source.close()
+
+    for flavor in ("woff", "woff2"):
+        output = tmp_path / f"noto-ridif.{flavor}"
+        assert output.exists(), f"{flavor} output is missing"
+        font = TTFont(str(output))
+        try:
+            assert font.flavor == flavor
+            cmap = font.getBestCmap()
+            assert cmap is not None
+            assert set(cmap) == expected_cmap
+        finally:
+            font.close()
+
+
 def test_render_demo_runs(tmp_path: Path) -> None:
     out_file = tmp_path / "test_demo.png"
     cmd = [
