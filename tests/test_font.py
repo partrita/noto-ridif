@@ -4,6 +4,9 @@ from pathlib import Path
 
 from fontTools.ttLib import TTFont
 
+from noto_ridif.coverage import find_missing
+from noto_ridif.verify import verify_font
+
 
 def test_font_file_exists() -> None:
     font_path = Path("noto-ridif.ttf")
@@ -26,6 +29,29 @@ def test_font_metadata() -> None:
     assert names_by_id.get(3) == "noto-ridif;noto-ridif-Regular"
     assert names_by_id.get(4) == "noto-ridif Regular"
     assert names_by_id.get(6) == "noto-ridif-Regular"
+
+
+def test_font_integrity() -> None:
+    """The generated font must pass cmap/hmtx/vmtx/name integrity checks."""
+    assert verify_font(Path("noto-ridif.ttf")) == []
+
+
+def test_required_coverage() -> None:
+    """Every character in the required ranges must be present."""
+    font = TTFont("noto-ridif.ttf")
+    try:
+        assert find_missing(font) == []
+    finally:
+        font.close()
+
+
+def test_vertical_metrics_complete() -> None:
+    """vmtx must cover every glyph, including overlay-only additions."""
+    font = TTFont("noto-ridif.ttf")
+    try:
+        assert len(font["vmtx"].metrics) == font["maxp"].numGlyphs
+    finally:
+        font.close()
 
 
 def test_render_demo_runs(tmp_path: Path) -> None:

@@ -79,8 +79,11 @@ def convert_bitmap_to_1bit(bitmap: freetype.Bitmap) -> bytes:
     return bytes(pixels)
 
 
-def convert_bitmap_to_2bit(bitmap: freetype.Bitmap) -> bytes:
-    """Pack grayscale FreeType bitmap buffer into 2-bit grayscale bytes (4 pixels per byte)."""
+def convert_bitmap_to_2bit(bitmap: freetype.Bitmap, gamma: float = 1.0) -> bytes:
+    """Pack grayscale FreeType bitmap buffer into 2-bit grayscale bytes (4 pixels per byte).
+
+    ``gamma`` < 1 darkens midtones (useful on e-paper), ``gamma`` > 1 lightens them.
+    """
     width = bitmap.width
     rows = bitmap.rows
     buffer = bitmap.buffer
@@ -95,6 +98,8 @@ def convert_bitmap_to_2bit(bitmap: freetype.Bitmap) -> bytes:
     pixels_filled = 0
 
     for val in buffer:
+        if gamma != 1.0:
+            val = int(255.0 * ((val / 255.0) ** gamma))
         two_bit = min(3, val >> 6)
         curr_byte = (curr_byte << 2) | two_bit
         pixels_filled += 1
@@ -189,6 +194,7 @@ def convert_font_to_epdfont(
     letter_spacing: int = 0,
     width_scale: float = 1.0,
     baseline_offset: int = 0,
+    gamma: float = 1.0,
 ) -> bool:
     """Convert TTF font(s) to .epdfont binary format."""
     font_stack = [freetype.Face(str(f)) for f in font_files]
@@ -243,7 +249,11 @@ def convert_font_to_epdfont(
                     continue
 
                 bitmap = face.glyph.bitmap
-                packed = convert_bitmap_to_2bit(bitmap) if is_2bit else convert_bitmap_to_1bit(bitmap)
+                packed = (
+                    convert_bitmap_to_2bit(bitmap, gamma=gamma)
+                    if is_2bit
+                    else convert_bitmap_to_1bit(bitmap)
+                )
 
                 original_advance_x = norm_floor(face.glyph.advance.x)
                 adjusted_advance_x = int(original_advance_x * width_scale) + letter_spacing
@@ -282,6 +292,8 @@ def convert_font_to_epdfont(
         click.echo(f"  Width scale (장평): {width_scale*100:.0f}%")
     if baseline_offset != 0:
         click.echo(f"  Baseline offset: {baseline_offset:+d}px")
+    if gamma != 1.0:
+        click.echo(f"  Gamma: {gamma:.2f} (2-bit grayscale only)")
 
     write_epdfont(
         output_path=output_path,
@@ -414,6 +426,13 @@ def write_epdfont(
     show_default=True,
     help="Baseline vertical offset in pixels (positive = up).",
 )
+@click.option(
+    "--gamma",
+    type=float,
+    default=1.0,
+    show_default=True,
+    help="Gamma for 2-bit grayscale quantization (<1 darkens midtones, >1 lightens).",
+)
 def main(
     name: str,
     size: int,
@@ -425,6 +444,7 @@ def main(
     letter_spacing: int,
     width_scale: float,
     baseline_offset: int,
+    gamma: float,
 ) -> None:
     output_path = output if output else f"{name}_{size}.epdfont"
 
@@ -446,6 +466,7 @@ def main(
         letter_spacing=letter_spacing,
         width_scale=width_scale,
         baseline_offset=baseline_offset,
+        gamma=gamma,
     )
 
     if success:

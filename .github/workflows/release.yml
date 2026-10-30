@@ -29,14 +29,22 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen || uv sync
 
-      - name: Build merged font
-        run: uv run noto-ridif --output noto-ridif.ttf
+      - name: Build merged and hinted font
+        run: uv run noto-ridif --hint --verify --output noto-ridif.ttf
 
-      - name: Create Release and Upload Asset
+      - name: Build E-Paper fonts (20px and 28px, 2-bit)
+        run: |
+          uv run python scripts/font_to_epdfont.py noto-ridif 20 noto-ridif.ttf -o noto-ridif_20_2bit.epdfont
+          uv run python scripts/font_to_epdfont.py noto-ridif 28 noto-ridif.ttf -o noto-ridif_28_2bit.epdfont
+
+      - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: noto-ridif.ttf
+          files: |
+            noto-ridif.ttf
+            noto-ridif_20_2bit.epdfont
+            noto-ridif_28_2bit.epdfont
           generate_release_notes: true
           draft: false
           prerelease: false
@@ -45,4 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: noto-ridif-font
-          path: noto-ridif.ttf
+          path: |
+            noto-ridif.ttf
+            noto-ridif_20_2bit.epdfont
+            noto-ridif_28_2bit.epdfont
